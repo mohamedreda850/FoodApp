@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { toast } from "react-toastify";
-export default function Login() {
+export default function Login({ saveLoginData }) {
   const navigate = useNavigate()
   const {
     register,
@@ -14,7 +14,8 @@ export default function Login() {
   const onSubmit = async (data1) => {
     try {
       const { data } = await axios.post("https://upskilling-egypt.com:3006/api/v1/Users/Login" , data1);
-      console.log(data);
+      localStorage.setItem("foodAppToken", data.token);
+      saveLoginData()
       toast.success("Login Successfully");
       navigate("/dashboard");
     } catch (error) {
