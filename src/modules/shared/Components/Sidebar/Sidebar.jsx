@@ -54,6 +54,7 @@ export default function SideBar() {
             Change password{" "}
           </MenuItem>
           <MenuItem
+          onClick={()=>{localStorage.removeItem("foodAppToken")}}
             icon={<i className="fa fa-arrow-right-from-bracket"></i>}
             component={<Link to="/login" />}
           >
