@@ -4,24 +4,28 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { axiosInstans, USERS_URLS } from "../../../../services/urls/urls";
+import { EMAIL_VALIDATION } from "../../../../services/validations/validation";
 
 export default function ForgetPass() {
   const navigate = useNavigate()
+  const [loader, setLoader] = useState(false)
   const {
     register,
     formState: { errors },
     handleSubmit,
   } = useForm();
   const onSubmit = async (data1) => {
+    setLoader(true)
     try {
-      const { data } = await axios.post("https://upskilling-egypt.com:3006/api/v1/Users/Reset/Request" , data1);
-      console.log(data);
+      const { data } = await axiosInstans.post(USERS_URLS.RESET_REQUEST , data1);
+      setLoader(false);
       toast.success(data.message);
       navigate("/reset-password");
     } catch (error) {
       console.log(error);
       toast.error(error.response.data.message);
-      
+      setLoader(false);
     }
   };
   return (
@@ -50,13 +54,7 @@ export default function ForgetPass() {
                     placeholder="Enter your email"
                     aria-label="email"
                     aria-describedby="basic-addon1"
-                    {...register("email", {
-                      required: "Email is required",
-                      pattern: {
-                        value: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g,
-                        message: "Invalid email address",
-                      },
-                    })}
+                    {...register("email", EMAIL_VALIDATION)}
                   />
                 </div>
                 {errors.email && (
@@ -65,7 +63,7 @@ export default function ForgetPass() {
            
         
                 <button type="submit" className="btn-success w-100 btn my-5">
-                  Submit
+                {loader?  <i className="fa fa-spinner fa-spin"></i>:'Submit' }
                 </button>
               </form>
             </div>

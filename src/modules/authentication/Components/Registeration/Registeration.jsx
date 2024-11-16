@@ -1,31 +1,42 @@
 import axios from "axios";
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import logo from "./../../../../assets/images/logo.png";
 import { Link } from "react-router-dom";
+import { axiosInstans, USERS_URLS } from "../../../../services/urls/urls";
+import { EMAIL_VALIDATION, NAME_VALIDATION, PASSWORD_VALIDATION, PHONE_NUMBER_VALIDATION } from "../../../../services/validations/validation";
 export default function Registeration() {
   const navigate = useNavigate();
   const {
     register,
     formState: { errors },
     handleSubmit,
+    watch
   } = useForm();
+  const [loader, setLoader] = useState(false)
   const onSubmit = async (data1) => {
+    setLoader(true)
     try {
-      const { data } = await axios.post(
-        "https://upskilling-egypt.com:3006/api/v1/Users/Register",
+      const { data } = await axiosInstans.post(
+        USERS_URLS.REGISTER,
         data1
       );
-      console.log(data);
+      setLoader(data);
       toast.success("register Successfully");
       navigate("/login");
+      setLoader(false);
     } catch (error) {
       console.log(error);
       toast.error(error.response.data.message);
+      setLoader(false);
+    }finally {
+      
     }
+    
   };
+  const password = watch("password");
   return (
     <div className="auth-container ">
       <div className="container-fluid bg-overlay">
@@ -54,10 +65,7 @@ export default function Registeration() {
                       placeholder="Enter your name"
                       aria-label="name"
                       aria-describedby="basic-addon1"
-                      {...register("userName", {
-                        required: "Email is required",
-                        pattern: true
-                      })}
+                      {...register("userName", NAME_VALIDATION)}
                     />
                   </div>
                   {errors.userName  && (
@@ -73,13 +81,7 @@ export default function Registeration() {
                       placeholder="Enter your email"
                       aria-label="email"
                       aria-describedby="basic-addon1"
-                      {...register("email", {
-                        required: "Email is required",
-                        pattern: {
-                          value: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g,
-                          message: "Invalid email address",
-                        },
-                      })}
+                      {...register("email", EMAIL_VALIDATION)}
                     />
                   </div>
                   {errors.email && (
@@ -116,10 +118,7 @@ export default function Registeration() {
                       placeholder="Enter your phone number"
                       aria-label="phoneNumber"
                       aria-describedby="basic-addon1"
-                      {...register("phoneNumber", {
-                        required: "Email is required",
-                        pattern: true
-                      })}
+                      {...register("phoneNumber",PHONE_NUMBER_VALIDATION)}
                     />
                   </div>
                   {errors.phoneNumber && (
@@ -137,9 +136,7 @@ export default function Registeration() {
                       placeholder="Enter your password"
                       aria-label="password"
                       aria-describedby="basic-addon1"
-                      {...register("password", {
-                        required: "Password is required",
-                      })}
+                      {...register("password", PASSWORD_VALIDATION)}
                     />
                   </div>
                   {errors.password && (
@@ -158,7 +155,10 @@ export default function Registeration() {
                       aria-label="confirmPassword"
                       aria-describedby="basic-addon1"
                       {...register("confirmPassword", {
-                        required: "Password is required",
+                        required: "Confirm Password is required",
+                        validate: (value) =>
+                          value === password || "The passwords do not match",
+                        
                       })}
                     />
                   </div>
@@ -179,7 +179,7 @@ export default function Registeration() {
                  
                 </div>
                 <button type="submit" className="btn-success w-100 btn my-2">
-                  Register
+                  {loader?  <i className="fa fa-spinner fa-spin"></i>:'Register' }
                 </button>
               </form>
             </div>

@@ -7,14 +7,17 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import DeleteConfirmation from "../../../shared/Components/DeleteConfirmation/DeleteConfirmation";
 import NoData from "../../../shared/Components/NoData/NoData";
+import { axiosInstans, RECIPES_URLS } from "../../../../services/urls/urls";
 
 export default function RecipesList() {
   const [recipesList, setRecipesList] = useState([]);
   const getRecipes = async () => {
     try {
-      const { data } = await axios.get(
-        "https://upskilling-egypt.com:3006/api/v1/Recipe/?pageSize=10&pageNumber=1",
-        {
+      const { data } = await axiosInstans.get(
+       RECIPES_URLS.GET_RECIPES,
+        { params:{
+          pageSize:10,pageNumber:1
+        },
           headers: {
             Authorization: localStorage.getItem("foodAppToken"),
           },
@@ -32,8 +35,8 @@ export default function RecipesList() {
   const handleClose = () => setShow(false);
   const deleteRecipe = async () => {
     try {
-      const { data } = await axios.delete(
-        `https://upskilling-egypt.com:3006/api/v1/Recipe/${selectedId}`,
+      const { data } = await axiosInstans.delete(
+        RECIPES_URLS.DELETE_RECIPE(selectedId),
         {
           headers: {
             Authorization: localStorage.getItem("foodAppToken"),

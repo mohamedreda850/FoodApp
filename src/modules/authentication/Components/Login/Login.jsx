@@ -1,10 +1,13 @@
 import React from "react";
 import logo from "./../../../../assets/images/logo.png";
 import { Link, useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import axios from "axios";
+import { set, useForm } from "react-hook-form";
+
 import { toast } from "react-toastify";
+import { axiosInstans, USERS_URLS } from "../../../../services/urls/urls";
+import { EMAIL_VALIDATION, PASSWORD_VALIDATION } from "../../../../services/validations/validation";
 export default function Login({ saveLoginData }) {
+  const [loader, setLoader] = useState(false)
   const navigate = useNavigate()
   const {
     register,
@@ -12,16 +15,18 @@ export default function Login({ saveLoginData }) {
     handleSubmit,
   } = useForm();
   const onSubmit = async (data1) => {
+    setLoader(true)
     try {
-      const { data } = await axios.post("https://upskilling-egypt.com:3006/api/v1/Users/Login" , data1);
+      const { data } = await axiosInstans.post(USERS_URLS.LOGIN , data1);
       localStorage.setItem("foodAppToken", data.token);
       saveLoginData()
       toast.success("Login Successfully");
+      setLoader(false);
       navigate("/dashboard");
     } catch (error) {
       console.log(error);
       toast.error(error.response.data.message);
-      
+      setLoader(false);
     }
   };
   return (
@@ -50,13 +55,8 @@ export default function Login({ saveLoginData }) {
                     placeholder="Enter your email"
                     aria-label="email"
                     aria-describedby="basic-addon1"
-                    {...register("email", {
-                      required: "Email is required",
-                      pattern: {
-                        value: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g,
-                        message: "Invalid email address",
-                      },
-                    })}
+                    {...register("email",EMAIL_VALIDATION ,
+                    )}
                   />
                 </div>
                 {errors.email && (
@@ -72,9 +72,7 @@ export default function Login({ saveLoginData }) {
                     placeholder="Enter your password"
                     aria-label="password"
                     aria-describedby="basic-addon1"
-                    {...register("password", {
-                      required: "Password is required",
-                    })}
+                    {...register("password", PASSWORD_VALIDATION)}
                   />
                 </div>
                 {errors.password && (
@@ -95,7 +93,7 @@ export default function Login({ saveLoginData }) {
                   </Link>
                 </div>
                 <button type="submit" className="btn-success w-100 btn my-2">
-                  Login
+                {loader?  <i className="fa fa-spinner fa-spin"></i>:'Login' }
                 </button>
               </form>
             </div>

@@ -6,14 +6,18 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import DeleteConfirmation from "../../../shared/Components/DeleteConfirmation/DeleteConfirmation";
 import NoData from "../../../shared/Components/NoData/NoData";
+import { axiosInstans, CATEGORIES_URLS } from "../../../../services/urls/urls";
 
 export default function CategoriesList() {
   const [categoriesList, setCategoriesList] = useState([]);
   const getCategories = async () => {
     try {
-      const { data } = await axios.get(
-        "https://upskilling-egypt.com:3006/api/v1/Category/?pageSize=10&pageNumber=1",
+      const { data } = await axiosInstans.get(
+        CATEGORIES_URLS.GET_CATEGORIES,
         {
+          params:{
+            pageSize:10,pageNumber:1
+          },
           headers: {
             Authorization: localStorage.getItem("foodAppToken"),
           },
@@ -31,8 +35,8 @@ export default function CategoriesList() {
   const handleClose = () => setShow(false);
   const deleteCategory = async () => {
     try {
-      const { data } = await axios.delete(
-        `https://upskilling-egypt.com:3006/api/v1/Category/${selectedId}`,
+      const { data } = await axiosInstans.delete(
+        CATEGORIES_URLS.DELETE_CATEGORY(selectedId),
         {
           headers: {
             Authorization: localStorage.getItem("foodAppToken"),
