@@ -165,7 +165,7 @@ export default function RecipesList() {
     setValue("description", selectedrecipe?.description);
     setValue("price", selectedrecipe?.price);
     setValue("tagId", selectedrecipe?.tag?.id);
-    setValue("categoriesIds", selectedrecipe?.category[0].id);
+    setValue("categoriesIds", selectedrecipe?.category[0]?.id);
   }, [selectedrecipe]);
   return (
     <>

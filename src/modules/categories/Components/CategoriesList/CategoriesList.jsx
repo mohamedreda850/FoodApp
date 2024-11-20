@@ -13,9 +13,10 @@ export default function CategoriesList() {
   const [categoriesList, setCategoriesList] = useState([]);
   const {
     register,
-    formState: { errors , isSubmitting},
+    formState: { errors, isSubmitting },
     handleSubmit,
     setValue,
+    reset,
   } = useForm({ defaultValues: { name: "" } });
 
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -29,7 +30,10 @@ export default function CategoriesList() {
 
   //modal for add new category
   const [showAdd, setShowAdd] = useState(false);
-  const handleShowAdd = () => setShowAdd(true);
+  const handleShowAdd = () => {
+    setShowAdd(true);
+    reset();
+  };
   const handleCloseAdd = () => setShowAdd(false);
   const onSubmitAdd = async (data1) => {
     try {
