@@ -6,11 +6,11 @@ import Navbar from "./../Components/Navbar/Navbar";
 
 export default function  MainLayout({loginData}) {
   return (
-    <div className="d-flex">
-      <div className="">
+    <div className="d-flex ">
+      
         {" "}
         <SideBar />
-      </div>
+      
 
       <div className="w-100">
         <Navbar loginData={loginData} />

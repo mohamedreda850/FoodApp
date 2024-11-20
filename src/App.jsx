@@ -44,7 +44,7 @@ function App() {
       children: [
         {
           index: true,
-          element: <Registeration />,
+          element:  <Login saveLoginData={saveLoginData}/>,
         },
         {
           path: "register",

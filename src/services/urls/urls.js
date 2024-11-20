@@ -1,6 +1,6 @@
 import axios from "axios"
 
-
+export const imgBaseUrl = "https://upskilling-egypt.com:3006"
 const baseURL = "https://upskilling-egypt.com:3006/api/v1"
 
 export const axiosInstans=axios.create({baseURL })
@@ -15,7 +15,7 @@ export const USERS_URLS={
 
 //categories urls
 export const CATEGORIES_URLS={
-    CREATE_CATEGORY :(id)=>`/Category${id}`,
+    CREATE_CATEGORY :`/Category`,
     GET_CATEGORIES:`/Category`,
     GET_CATEGORY:(id)=>`/Category/${id}`,
     DELETE_CATEGORY:(id)=>`/Category/${id}`,
@@ -24,7 +24,7 @@ export const CATEGORIES_URLS={
 //recipes urls
 export const RECIPES_URLS={
     CREATE_RECIPE:`/Recipe`,
-    GET_RECIPES:`/Recip`,
+    GET_RECIPES:`/Recipe`,
     GET_RECIPE:(id)=>`/Recipe/${id}`,
     DELETE_RECIPE:(id)=>`/Recipe/${id}`,
     UPDATE_RECIPE:(id)=>`/Recipe/${id}`,

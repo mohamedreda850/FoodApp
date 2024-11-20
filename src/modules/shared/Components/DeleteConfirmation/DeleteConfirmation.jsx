@@ -6,11 +6,10 @@ export default function DeleteConfirmation({deleteItem , deleteFunc , show , han
   
  
   return (
-    <div>
-      {" "}
+    
       <Modal show={show} onHide={handleClose} animation={false}>
         <Modal.Header closeButton>
-          <Modal.Title>Modal heading</Modal.Title>
+          <Modal.Title>Delete {deleteItem}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div className="text-center">
@@ -28,10 +27,9 @@ export default function DeleteConfirmation({deleteItem , deleteFunc , show , han
             className="bg-danger"
             onClick={deleteFunc}
           >
-            Delete this category
+            Delete this {deleteItem}
           </Button>
         </Modal.Footer>
       </Modal>
-    </div>
   );
 }

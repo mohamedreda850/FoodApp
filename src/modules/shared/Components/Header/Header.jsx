@@ -2,13 +2,13 @@ import React from 'react'
 
 export default function Header({title, description , imag}) {
   return (
-    <div className='header-container p-5 d-flex justify-content-between align-items-center m-5' >
-      <div className='caption text-white w-50'>
+    <div className='header-container p-5 row justify-content-between align-items-center m-5 ' >
+      <div className='caption text-white col-md-6 '>
         <h3>{title}</h3>
         <p>{description}</p>
       </div>
-      <div className="header-img">
-        <img src={imag} alt="" />
+      <div className="col-md-6  text-end">
+        <img  className='header-img-1 img-fluid ' src={imag} alt="" />
       </div>
     </div>
   )
