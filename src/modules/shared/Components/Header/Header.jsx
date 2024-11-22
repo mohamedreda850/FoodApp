@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 export default function Header({title, description , imag}) {
   return (
@@ -9,6 +10,7 @@ export default function Header({title, description , imag}) {
       </div>
       <div className="col-md-6  text-end">
         <img  className='header-img-1 img-fluid ' src={imag} alt="" />
+        
       </div>
     </div>
   )

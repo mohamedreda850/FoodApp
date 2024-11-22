@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 
 import { toast } from "react-toastify";
-import { axiosInstans, USERS_URLS } from "../../../../services/urls/urls";
+import { AUTH_URLS, axiosInstans} from "../../../../services/urls/urls";
 import { EMAIL_VALIDATION } from "../../../../services/validations/validation";
 import { useState } from "react";
 
@@ -17,7 +17,7 @@ export default function ForgetPass() {
   const onSubmit = async (data1) => {
     setLoader(true);
     try {
-      const { data } = await axiosInstans.post(USERS_URLS.RESET_REQUEST, data1);
+      const { data } = await axiosInstans.post(AUTH_URLS.RESET_REQUEST, data1);
       setLoader(false);
       toast.success(data.message);
       navigate("/reset-password",{state:{email:data1.email}});

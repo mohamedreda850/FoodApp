@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { set, useForm } from "react-hook-form";
 
 import { toast } from "react-toastify";
-import { axiosInstans, USERS_URLS } from "../../../../services/urls/urls";
+import { AUTH_URLS, axiosInstans, USERS_URLS } from "../../../../services/urls/urls";
 import {
   EMAIL_VALIDATION,
   PASSWORD_VALIDATION,
@@ -21,7 +21,7 @@ export default function Login({ saveLoginData }) {
   const onSubmit = async (data1) => {
     setLoader(true);
     try {
-      const { data } = await axiosInstans.post(USERS_URLS.LOGIN, data1);
+      const { data } = await axiosInstans.post(AUTH_URLS.LOGIN, data1);
       localStorage.setItem("foodAppToken", data.token);
       saveLoginData();
       toast.success("Login Successfully");

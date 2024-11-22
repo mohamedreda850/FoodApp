@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import logo from "./../../../../assets/images/logo.png";
 import { Link } from "react-router-dom";
-import { axiosInstans, USERS_URLS } from "../../../../services/urls/urls";
+import { AUTH_URLS, axiosInstans, USERS_URLS } from "../../../../services/urls/urls";
 import {
   EMAIL_VALIDATION,
   NAME_VALIDATION,
@@ -26,7 +26,7 @@ export default function Registeration() {
   const onSubmit = async (data1) => {
     setLoader(true);
     try {
-      const { data } = await axiosInstans.post(USERS_URLS.REGISTER, data1);
+      const { data } = await axiosInstans.post(AUTH_URLS.REGISTER, data1);
       setLoader(data);
       toast.success("register Successfully");
       navigate("/login");

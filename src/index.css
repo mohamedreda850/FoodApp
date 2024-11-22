@@ -18,6 +18,7 @@
 }
 .sidebar-container {
   position: sticky;
+  align-self: flex-start;
   top: 0;
   left: 0;
   bottom: 0;

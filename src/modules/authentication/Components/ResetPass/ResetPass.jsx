@@ -4,7 +4,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { axiosInstans, USERS_URLS } from "../../../../services/urls/urls";
+import { AUTH_URLS, axiosInstans, USERS_URLS } from "../../../../services/urls/urls";
 import { EMAIL_VALIDATION, PASSWORD_VALIDATION } from "../../../../services/validations/validation";
 
 export default function ResetPass() {
@@ -22,7 +22,7 @@ export default function ResetPass() {
   const onSubmit = async (data1) => {
     setLoader(true);
     try {
-      const { data } = await axiosInstans.post(USERS_URLS.FORGET_PASS, data1);
+      const { data } = await axiosInstans.post(AUTH_URLS.FORGET_PASS, data1);
 
       toast.success("Reset Password Is Successfully");
       setLoader(false);

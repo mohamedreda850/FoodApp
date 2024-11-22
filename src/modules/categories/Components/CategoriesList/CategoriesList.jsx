@@ -8,9 +8,11 @@ import NoData from "../../../shared/Components/NoData/NoData";
 import { axiosInstans, CATEGORIES_URLS } from "../../../../services/urls/urls";
 import { Modal } from "react-bootstrap";
 import { useForm } from "react-hook-form";
+import useCategories from "./../../../../hooks/useCategories";
 
 export default function CategoriesList() {
-  const [categoriesList, setCategoriesList] = useState([]);
+  
+  const categoriesQuairy  = useCategories();
   const {
     register,
     formState: { errors, isSubmitting },
@@ -46,8 +48,7 @@ export default function CategoriesList() {
           },
         }
       );
-      console.log(data.data);
-      getCategories();
+      categoriesQuairy.triggerCat();
       toast.success("category is added sucsessfuly");
       setShowAdd(false);
     } catch (error) {
@@ -59,7 +60,7 @@ export default function CategoriesList() {
   const [showEdit, setShowEdit] = useState(false);
   const handleShowEdit = (id) => {
     setSelectedId(id);
-    const category = categoriesList.find((cat) => cat.id === id);
+    const category = categoriesQuairy?.categories?.data?.find((cat) => cat.id === id);
     setSelectedCategory(category);
 
     setShowEdit(true);
@@ -77,27 +78,10 @@ export default function CategoriesList() {
         }
       );
 
-      getCategories();
+      categoriesQuairy.triggerCat();
       toast.success("category is edited sucsessfuly");
 
       setShowEdit(false);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  const getCategories = async () => {
-    try {
-      const { data } = await axiosInstans.get(CATEGORIES_URLS.GET_CATEGORIES, {
-        params: {
-          pageSize: 10,
-          pageNumber: 1,
-        },
-        headers: {
-          Authorization: localStorage.getItem("foodAppToken"),
-        },
-      });
-      console.log(data.data);
-      setCategoriesList(data.data);
     } catch (error) {
       console.log(error);
     }
@@ -117,7 +101,7 @@ export default function CategoriesList() {
       );
       console.log(data);
       toast.success("category is deleted sucsessfuly");
-      getCategories();
+      categoriesQuairy.triggerCat()
     } catch (error) {
       error;
     }
@@ -125,9 +109,7 @@ export default function CategoriesList() {
     handleClose();
   };
 
-  useEffect(() => {
-    getCategories();
-  }, []);
+  
   useEffect(() => {
     setValue("name", selectedCategory?.name);
   }, [selectedCategory]);
@@ -222,7 +204,7 @@ export default function CategoriesList() {
         </button>
       </div>
       <div className="p-5">
-        {categoriesList.length > 0 ? (
+        {categoriesQuairy?.categories?.data?.length > 0 ? (
           <table className="table ">
             <thead>
               <tr>
@@ -231,8 +213,8 @@ export default function CategoriesList() {
                 <th scope="col">Actions</th>
               </tr>
             </thead>
-            <tbody>
-              {categoriesList.map((category, idx) => (
+            <tbody> 
+              {categoriesQuairy?.categories?.data?.map((category, idx) => (
                 <tr key={idx}>
                   <td>{category.name}</td>
                   <td>{category.creationDate}</td>
@@ -253,6 +235,7 @@ export default function CategoriesList() {
         ) : (
           <NoData />
         )}
+        
       </div>
     </>
   );

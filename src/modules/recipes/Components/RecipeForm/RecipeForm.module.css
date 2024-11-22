@@ -1,0 +1,69 @@
+.header-wrapper {
+  background-color: #f0ffef;
+  border-radius: 15px;
+  margin-inline: 2rem;
+  margin-top: 1, 375rem;
+  padding-block: 2.625rem;
+  padding-inline: 4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.conten-wrapper {
+  max-width: 30rem;
+}
+.btn-primary {
+  background-color: #009247;
+  border: #009247;
+  color: white;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 1rem;
+  padding-inline: 2rem;
+  padding-block: 1rem;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.link-cnasel-btn {
+  background-color: white;
+  border: #009247 2px solid;
+  color: #009247;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 1rem;
+  padding-inline: 2rem;
+  padding-block: 1rem;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.form-wrapper {
+  margin-inline: 8.5rem;
+  margin-top: 5.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+.input-wrapper {
+  width: 100%;
+  input,
+  select,
+  textarea {
+    width: 100%;
+    padding: 1rem;
+    background-color: #f7f7f7;
+    & ::placeholder {
+      color: rgba(0, 0, 0, 20%);
+    }
+  }
+}
+.action-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  gap: 3.5rem;
+}

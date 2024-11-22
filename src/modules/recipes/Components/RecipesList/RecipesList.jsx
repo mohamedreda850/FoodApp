@@ -8,38 +8,38 @@ import DeleteConfirmation from "../../../shared/Components/DeleteConfirmation/De
 import NoData from "../../../shared/Components/NoData/NoData";
 import {
   axiosInstans,
+  CATEGORIES_URLS,
   imgBaseUrl,
   RECIPES_URLS,
+  TAGS_URLS,
 } from "../../../../services/urls/urls";
-import { Modal } from "react-bootstrap";
-import { useForm } from "react-hook-form";
+
+import { Link } from "react-router-dom";
 
 export default function RecipesList() {
-  const {
-    register,
-    formState: { errors, isSubmitting },
-    handleSubmit,
-    reset,
-    setValue,
-  } = useForm({
-    defaultValues: {
-      categoriesIds: 0,
-    },
-  });
   const [recipesList, setRecipesList] = useState([]);
-  const [selectedrecipe, setSelectedrecipe] = useState(null);
-  const getRecipes = async () => {
+  const [arrayOfPages, setArrayOfPages] = useState([]);
+  const [categoriesList, setCategoriesList] = useState([]);
+  const [tags, setTags] = useState([]);
+  const [nameValue, setNameValue] = useState('')
+  const getRecipes = async (pageNo, pageSize ,name) => {
     try {
       const { data } = await axiosInstans.get(RECIPES_URLS.GET_RECIPES, {
         params: {
-          pageSize: 10,
-          pageNumber: 1,
+          pageSize: pageSize,
+          pageNumber: pageNo,
+          name: name
         },
         headers: {
           Authorization: localStorage.getItem("foodAppToken"),
         },
       });
       console.log(data.data);
+      setArrayOfPages(
+        Array(data.totalNumberOfPages)
+          .fill()
+          .map((_, idx) => idx + 1)
+      );
       setRecipesList(data.data);
     } catch (error) {
       console.log(error);
@@ -74,99 +74,45 @@ export default function RecipesList() {
     setShow(true);
   };
   //end Delete modale
-
-  //modal for add new recipe
-
-  const [showAdd, setShowAdd] = useState(false);
-  const handleShowAdd = () => {
-    setShowAdd(true);
-    reset();
-  };
-  const handleCloseAdd = () => setShowAdd(false);
-
-  const onSubmitAdd = async (data1) => {
+  const getTags = async () => {
     try {
-      const formData = new FormData();
-
-      formData.append("name", data1.name);
-      formData.append("price", data1.price);
-      formData.append("description", data1.description);
-
-      formData.append("categoriesIds", data1.categoriesIds);
-      formData.append("tagId", data1.tagId);
-
-      formData.append("recipeImage", data1.recipeImage[0]);
-      const { data } = await axiosInstans.post(
-        RECIPES_URLS.CREATE_RECIPE,
-        formData,
-        {
-          headers: {
-            Authorization: localStorage.getItem("foodAppToken"),
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const { data } = await axiosInstans.get(TAGS_URLS.GET_TAGS);
       console.log(data);
 
-      toast.success("Recipe is added sucsessfuly");
-      getRecipes();
-      handleCloseAdd();
+      setTags(data);
     } catch (error) {
       console.log(error);
     }
   };
 
-  // Modal for edit recipe
-  const [showEdit, setShowEdit] = useState(false);
-  const handleShowEdit = (id) => {
-    setSelectedId(id);
-    const recipe = recipesList.find((rec) => rec.id === id);
-    setSelectedrecipe(recipe);
-
-    setShowEdit(true);
-  };
-  const handleCloseEdit = () => setShowEdit(false);
-  const onSubmitEdit = async (data1) => {
+  const getCategories = async () => {
     try {
-      const formData = new FormData();
+      const { data } = await axiosInstans.get(CATEGORIES_URLS.GET_CATEGORIES, {
+        params: {
+          pageSize: 10,
+          pageNumber: 1,
+        },
+        headers: {
+          Authorization: localStorage.getItem("foodAppToken"),
+        },
+      });
+      console.log(data.data);
 
-      formData.append("name", data1.name);
-      formData.append("price", data1.price);
-      formData.append("description", data1.description);
-
-      formData.append("categoriesIds", data1.categoriesIds);
-      formData.append("tagId", data1.tagId);
-
-      formData.append("recipeImage", data1.recipeImage[0]);
-      const { data } = await axiosInstans.put(
-        RECIPES_URLS.UPDATE_RECIPE(selectedId),
-        formData,
-        {
-          headers: {
-            Authorization: localStorage.getItem("foodAppToken"),
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      console.log(data);
-
-      toast.success("Recipe is updated sucsessfuly");
-      getRecipes();
-      handleCloseAdd();
+      setCategoriesList(data.data);
     } catch (error) {
       console.log(error);
     }
   };
+  const getNameValue = async(input)=>{
+    setNameValue(input.target.value)
+    getRecipes(1,3,input.target.value)
+  }
   useEffect(() => {
-    getRecipes();
+    getRecipes(1, 3);
+    getTags();
+    getCategories();
   }, []);
-  useEffect(() => {
-    setValue("name", selectedrecipe?.name);
-    setValue("description", selectedrecipe?.description);
-    setValue("price", selectedrecipe?.price);
-    setValue("tagId", selectedrecipe?.tag?.id);
-    setValue("categoriesIds", selectedrecipe?.category[0]?.id);
-  }, [selectedrecipe]);
+
   return (
     <>
       <Header
@@ -183,221 +129,42 @@ export default function RecipesList() {
         show={show}
         handleClose={handleClose}
       />
-      <Modal show={showAdd} onHide={handleCloseAdd} animation={false}>
-        <Modal.Header closeButton>
-          <Modal.Title>Add Recipe </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <form onSubmit={handleSubmit(onSubmitAdd)}>
-            <div className="input-group my-3">
-              <input
-                type="text"
-                className="form-control "
-                placeholder="Category Name"
-                aria-label="name"
-                aria-describedby="basic-addon1"
-                {...register("name", {
-                  required: "Category Name is required",
-                })}
-              />
-            </div>
-            {errors.name && (
-              <span className="text-danger">{errors.name.message}</span>
-            )}
 
-            <div className="input-group my-3">
-              <input
-                type="text"
-                className="form-control "
-                placeholder="Recipe description"
-                aria-label="RecipeDescription"
-                aria-describedby="basic-addon1"
-                {...register("description", {
-                  required: "Recipe description is required",
-                })}
-              />
-            </div>
-            {errors.description && (
-              <span className="text-danger">{errors.description.message}</span>
-            )}
-            <div className="input-group my-3">
-              <input
-                type="text"
-                className="form-control "
-                placeholder="Recipe Price"
-                aria-label="RecipePrice"
-                aria-describedby="basic-addon1"
-                {...register("price", {
-                  required: "Recipe Price is required",
-                })}
-              />
-            </div>
-            {errors.price && (
-              <span className="text-danger">{errors.price.message}</span>
-            )}
-            <div className="input-group my-3">
-              <input
-                type="text"
-                className="form-control "
-                placeholder="tagid"
-                aria-label="tagid"
-                aria-describedby="basic-addon1"
-                {...register("tagId", { required: "tagid is required" })}
-              />
-            </div>
-            {errors.tagid && (
-              <span className="text-danger">{errors.tagid.message}</span>
-            )}
-            <div className="input-group my-3">
-              <input
-                type="file"
-                className="form-control "
-                placeholder="Recipe Image"
-                aria-label="recipeImage"
-                aria-describedby="basic-addon1"
-                accept="image/*"
-                {...register("recipeImage")}
-              />
-            </div>
-            {errors.recipeImage && (
-              <span className="text-danger">{errors.recipeImage.message}</span>
-            )}
-            <div className="input-group my-3">
-              <input
-                type="text"
-                className="form-control "
-                placeholder="Categories Ids"
-                aria-label="categoriesIds"
-                aria-describedby="basic-addon1"
-                {...register("categoriesIds")}
-              />
-            </div>
-            {errors.categoriesIds && (
-              <span className="text-danger">
-                {errors.categoriesIds.message}
-              </span>
-            )}
-            <button disabled={isSubmitting} type="submit" className="btn-success w-100 btn my-2">
-              {isSubmitting ? (
-                <i className="fa fa-spinner fa-spin"></i>
-              ) : (
-                "save"
-              )}
-            </button>
-          </form>
-        </Modal.Body>
-      </Modal>
-      <Modal show={showEdit} onHide={handleCloseEdit} animation={false}>
-        <Modal.Header closeButton>
-          <Modal.Title>Edit Recipe </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <form onSubmit={handleSubmit(onSubmitEdit)}>
-            <div className="input-group my-3">
-              <input
-                type="text"
-                className="form-control "
-                placeholder="Category Name"
-                aria-label="name"
-                aria-describedby="basic-addon1"
-                {...register("name", {
-                  required: "Category Name is required",
-                })}
-              />
-            </div>
-            {errors.name && (
-              <span className="text-danger">{errors.name.message}</span>
-            )}
-
-            <div className="input-group my-3">
-              <input
-                type="text"
-                className="form-control "
-                placeholder="Recipe description"
-                aria-label="RecipeDescription"
-                aria-describedby="basic-addon1"
-                {...register("description", {
-                  required: "Recipe description is required",
-                })}
-              />
-            </div>
-            {errors.description && (
-              <span className="text-danger">{errors.description.message}</span>
-            )}
-            <div className="input-group my-3">
-              <input
-                type="text"
-                className="form-control "
-                placeholder="Recipe Price"
-                aria-label="RecipePrice"
-                aria-describedby="basic-addon1"
-                {...register("price", {
-                  required: "Recipe Price is required",
-                })}
-              />
-            </div>
-            {errors.price && (
-              <span className="text-danger">{errors.price.message}</span>
-            )}
-            <div className="input-group my-3">
-              <input
-                type="text"
-                className="form-control "
-                placeholder="tagid"
-                aria-label="tagid"
-                aria-describedby="basic-addon1"
-                {...register("tagId", { required: "tagid is required" })}
-              />
-            </div>
-            {errors.tagid && (
-              <span className="text-danger">{errors.tagid.message}</span>
-            )}
-            <div className="input-group my-3">
-              <input
-                type="file"
-                className="form-control "
-                placeholder="Recipe Image"
-                aria-label="recipeImage"
-                aria-describedby="basic-addon1"
-                accept="image/*"
-                {...register("recipeImage")}
-              />
-            </div>
-            {errors.recipeImage && (
-              <span className="text-danger">{errors.recipeImage.message}</span>
-            )}
-            <div className="input-group my-3">
-              <input
-                type="text"
-                className="form-control "
-                placeholder="Categories Ids"
-                aria-label="categoriesIds"
-                aria-describedby="basic-addon1"
-                {...register("categoriesIds")}
-              />
-            </div>
-            {errors.categoriesIds && (
-              <span className="text-danger">
-                {errors.categoriesIds.message}
-              </span>
-            )}
-            <button disabled={isSubmitting} type="submit" className="btn-success w-100 btn my-2">
-              {isSubmitting ? (
-                <i className="fa fa-spinner fa-spin"></i>
-              ) : (
-                "Update"
-              )}
-            </button>
-          </form>
-        </Modal.Body>
-      </Modal>
       <div className="d-flex justify-content-between px-5">
         <h5>Recipe Table Details</h5>
-        <button onClick={handleShowAdd} className="btn btn-success">
+        <Link to="/dashboard/recipes/new-recipe" className="btn btn-success">
           Add New Recipe
-        </button>
+        </Link>
       </div>
       <div className="p-5">
+        <div className="row mb-3">
+          <div className="col-md-6">
+            <input
+              type="text"
+              placeholder="Search here"
+              className="form-control"
+              onChange={getNameValue}
+            />
+          </div>
+          <div className="col-md-3">
+            <select className="form-control">
+              {tags.map(({ id, name }) => (
+                <option value={id} key={id}>
+                  {name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="col-md-3">
+            <select className="form-control">
+              {categoriesList.map(({ id, name }) => (
+                <option value={id} key={id}>
+                  {name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
         {recipesList.length > 0 ? (
           <table className="table ">
             <thead>
@@ -435,10 +202,9 @@ export default function RecipesList() {
                       className="fa fa-trash mx-3 text-danger "
                       onClick={(_) => handleShow(recipe.id)}
                     ></i>
-                    <i
-                      className="fa fa-edit text-warning"
-                      onClick={() => handleShowEdit(recipe.id)}
-                    ></i>
+                    <Link to={`/dashboard/recipes/${recipe.id}`}>
+                      <i className="fa fa-edit text-warning"></i>
+                    </Link>
                   </td>
                 </tr>
               ))}
@@ -446,7 +212,33 @@ export default function RecipesList() {
           </table>
         ) : (
           <NoData />
-        )}
+        )}{" "}
+        <nav aria-label="Page navigation example">
+          <ul className="pagination">
+            <li className="page-item">
+              <a className="page-link" href="#" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+            {arrayOfPages.map((pageNo, idx) => (
+              <li
+                key={idx}
+                onClick={() => getRecipes(pageNo, 3)}
+                className="page-item"
+              >
+                <a className="page-link" href="#">
+                  {pageNo}
+                </a>
+              </li>
+            ))}
+
+            <li className="page-item">
+              <a className="page-link" href="#" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
       </div>
     </>
   );
