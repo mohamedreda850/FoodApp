@@ -45,7 +45,7 @@
   background: url(./../src/assets/images/header.svg), #009247;
   background-size: cover;
   background-position: center;
-  border-radius: 50px;
+  border-radius: 20px;
   margin: 10px;
 }
 
@@ -54,4 +54,34 @@
   width: 40px;
   object-fit: contain;
 }
-
+.favImage{
+  height: 200px;
+  width: 100%;
+  object-fit: cover;
+  border-radius: 20px;
+}
+.nodataImg{
+  height: 200px;
+  width: 100%;
+  object-fit: contain;
+  border-radius: 20px;
+}
+.changePassContainer{
+  box-shadow: #000 0px 0px 5px;
+}
+.fav-cart{
+  box-shadow: #000 0px 0px 5px;
+  border-radius: 20px;
+}
+.notFound-img{
+  width: 110%;
+}
+.notFound{
+  right: 100px;
+  bottom: 0;
+}
+.notfoundLink{
+  text-decoration: none;
+  color: white;
+  font-size: x-large;
+}

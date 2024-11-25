@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import logo from "./../../../../assets/images/logo.png";
 import { Link, useNavigate } from "react-router-dom";
 import { set, useForm } from "react-hook-form";
@@ -9,7 +9,11 @@ import {
   EMAIL_VALIDATION,
   PASSWORD_VALIDATION,
 } from "../../../../services/validations/validation";
-export default function Login({ saveLoginData }) {
+import { AuthContext } from "../../../../context/AuthContext";
+
+
+export default function Login() {
+  const {saveLoginData}= useContext(AuthContext)
   const [loader, setLoader] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false)
   const navigate = useNavigate();

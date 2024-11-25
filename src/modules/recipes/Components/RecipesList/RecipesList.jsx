@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Header from "../../../shared/Components/Header/Header";
 import headerImg from "./../../../../assets/images/UsersListHeaderImg.png";
 import noData from "./../../../../assets/images/noData.png";
@@ -9,26 +9,34 @@ import NoData from "../../../shared/Components/NoData/NoData";
 import {
   axiosInstans,
   CATEGORIES_URLS,
+  FAVORITES_URLS,
   imgBaseUrl,
   RECIPES_URLS,
   TAGS_URLS,
 } from "../../../../services/urls/urls";
 
 import { Link } from "react-router-dom";
+import { AuthContext } from './../../../../context/AuthContext';
+
 
 export default function RecipesList() {
   const [recipesList, setRecipesList] = useState([]);
   const [arrayOfPages, setArrayOfPages] = useState([]);
   const [categoriesList, setCategoriesList] = useState([]);
   const [tags, setTags] = useState([]);
-  const [nameValue, setNameValue] = useState('')
-  const getRecipes = async (pageNo, pageSize ,name) => {
+  const [nameValue, setNameValue] = useState("");
+  const [tagValue, setTagValue] = useState("");
+  const [catValue, setCatValue] = useState("");
+  const {loginData} = useContext(AuthContext)
+  const getRecipes = async (pageNo, pageSize, name, tagId, categoryId) => {
     try {
       const { data } = await axiosInstans.get(RECIPES_URLS.GET_RECIPES, {
         params: {
           pageSize: pageSize,
           pageNumber: pageNo,
-          name: name
+          name: name,
+          tagId: tagId,
+          categoryId: categoryId,
         },
         headers: {
           Authorization: localStorage.getItem("foodAppToken"),
@@ -74,6 +82,24 @@ export default function RecipesList() {
     setShow(true);
   };
   //end Delete modale
+
+  //start add to favorite
+  const addToFavorite = async (id) => {
+    try {
+    const {data} = await axiosInstans.post(FAVORITES_URLS.ADD_FAVORITE, {
+      recipeId: id,
+    }, {
+      headers: {
+        Authorization: localStorage.getItem("foodAppToken"),
+      },
+    });
+    toast.success("Recipe is added to favorite sucsessfuly");
+    } catch (error) {
+      console.log(error);
+      
+    }
+  }
+  //end add to favorite
   const getTags = async () => {
     try {
       const { data } = await axiosInstans.get(TAGS_URLS.GET_TAGS);
@@ -103,10 +129,18 @@ export default function RecipesList() {
       console.log(error);
     }
   };
-  const getNameValue = async(input)=>{
-    setNameValue(input.target.value)
-    getRecipes(1,3,input.target.value)
-  }
+  const getNameValue = (input) => {
+    setNameValue(input.target.value);
+    getRecipes(1, 3, input.target.value, tagValue, catValue);
+  };
+  const getTagValue = (input) => {
+    setTagValue(input.target.value);
+    getRecipes(1, 3, nameValue, input.target.value, catValue);
+  };
+  const getCatValue = (input) => {
+    setCatValue(input.target.value);
+    getRecipes(1, 3, nameValue, tagValue, input.target.value);
+  };
   useEffect(() => {
     getRecipes(1, 3);
     getTags();
@@ -132,9 +166,10 @@ export default function RecipesList() {
 
       <div className="d-flex justify-content-between px-5">
         <h5>Recipe Table Details</h5>
-        <Link to="/dashboard/recipes/new-recipe" className="btn btn-success">
+        {loginData?.userGroup != "SystemUser" ?( <Link to="/dashboard/recipes/new-recipe" className="btn btn-success">
           Add New Recipe
-        </Link>
+        </Link>):''}
+       
       </div>
       <div className="p-5">
         <div className="row mb-3">
@@ -147,7 +182,8 @@ export default function RecipesList() {
             />
           </div>
           <div className="col-md-3">
-            <select className="form-control">
+            <select className="form-control" onChange={getTagValue}>
+              <option>tag</option>
               {tags.map(({ id, name }) => (
                 <option value={id} key={id}>
                   {name}
@@ -156,7 +192,8 @@ export default function RecipesList() {
             </select>
           </div>
           <div className="col-md-3">
-            <select className="form-control">
+            <select className="form-control" onChange={getCatValue}>
+              <option>category</option>
               {categoriesList.map(({ id, name }) => (
                 <option value={id} key={id}>
                   {name}
@@ -176,6 +213,7 @@ export default function RecipesList() {
 
                 <th scope="col">Category</th>
                 <th scope="col">Actions</th>
+                
               </tr>
             </thead>
             <tbody>
@@ -197,7 +235,7 @@ export default function RecipesList() {
                   <td>{recipe.description}</td>
 
                   <td>{recipe?.category[0]?.name}</td>
-                  <td>
+                  {loginData?.userGroup != "SystemUser"? <td>
                     <i
                       className="fa fa-trash mx-3 text-danger "
                       onClick={(_) => handleShow(recipe.id)}
@@ -205,7 +243,10 @@ export default function RecipesList() {
                     <Link to={`/dashboard/recipes/${recipe.id}`}>
                       <i className="fa fa-edit text-warning"></i>
                     </Link>
-                  </td>
+                  </td>:<td>
+                    <i className="fa fa-heart text-danger" onClick={()=>addToFavorite(recipe.id)}></i> 
+                    </td>}
+                  
                 </tr>
               ))}
             </tbody>
@@ -215,11 +256,7 @@ export default function RecipesList() {
         )}{" "}
         <nav aria-label="Page navigation example">
           <ul className="pagination">
-            <li className="page-item">
-              <a className="page-link" href="#" aria-label="Previous">
-                <span aria-hidden="true">&laquo;</span>
-              </a>
-            </li>
+           
             {arrayOfPages.map((pageNo, idx) => (
               <li
                 key={idx}
@@ -232,11 +269,7 @@ export default function RecipesList() {
               </li>
             ))}
 
-            <li className="page-item">
-              <a className="page-link" href="#" aria-label="Next">
-                <span aria-hidden="true">&raquo;</span>
-              </a>
-            </li>
+            
           </ul>
         </nav>
       </div>

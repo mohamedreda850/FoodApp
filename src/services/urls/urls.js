@@ -1,4 +1,5 @@
 import axios from "axios"
+import VerifyAccount from "../../modules/authentication/Components/VerifyAccount/VerifyAccount"
 
 export const imgBaseUrl = "https://upskilling-egypt.com:3006"
 const baseURL = "https://upskilling-egypt.com:3006/api/v1"
@@ -11,6 +12,8 @@ export const AUTH_URLS={
     FORGET_PASS:`/Users/Reset`,
     GET_USER:(id)=>`/Users/${id}`,
     REGISTER:`/Users/Register`,
+    CHANGE_PASSWORD:`/Users/ChangePassword`,
+    VERIFY_ACCOUNT:`/Users/verify`,
 }
 
 //categories urls
@@ -41,4 +44,11 @@ export const USERS_URLS={
     GET_USER:(id)=>`/Users/${id}`,
     DELETE_USER:(id)=>`/Users/${id}`,
     
+}
+
+// favorites urls
+export const FAVORITES_URLS={
+    GET_FAVORITES:`/UserRecipe`,
+    ADD_FAVORITE:`/UserRecipe`,
+    DELETE_FAVORITE:`/UserRecipe/`,
 }

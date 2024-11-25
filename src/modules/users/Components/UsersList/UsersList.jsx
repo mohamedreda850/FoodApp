@@ -14,12 +14,16 @@ import { toast } from "react-toastify";
 export default function UsersList() {
   const [userslist, setUserslist] = useState([]);
   const [arrayOfPages, setArrayOfPages] = useState([]);
-  const getUsers = async (pageNo, pageSize) => {
+  const [nameValue, setNameValue] = useState("");
+  const [groubValue , setGroubValue] = useState("");
+  const getUsers = async (pageNo, pageSize, userName , groups) => {
     try {
       let response = await axiosInstans.get(USERS_URLS.GET_USERS_LIST, {
-        params:{
+        params: {
           pageSize: pageSize,
           pageNumber: pageNo,
+          userName: userName,
+          groups: groups,
         },
         headers: {
           Authorization: localStorage.getItem("foodAppToken"),
@@ -63,8 +67,16 @@ export default function UsersList() {
     setShow(true);
   };
   //end Delete modale
+  const getNameValue = (input) => {
+    setNameValue(input.target.value);
+    getUsers(1, 30, input.target.value, groubValue);
+  };
+  const getGroubValue = (input) => {
+    setGroubValue(input.target.value);
+    getUsers(1, 30, nameValue, input.target.value);
+  };
   useEffect(() => {
-    getUsers(1,30);
+    getUsers(1, 30);
   }, []);
   return (
     <>
@@ -84,7 +96,26 @@ export default function UsersList() {
       <div className="d-flex justify-content-between px-5">
         <h5>Users Table Details</h5>
       </div>
+
       <div className="p-5">
+        <div className="row mb-3">
+          <div className="col-md-8">
+            <input
+              type="text"
+              placeholder="Search here"
+              className="form-control"
+              onChange={getNameValue}
+            />
+          </div>
+          <div className="col-md-4">
+            <select className="form-control" onChange={getGroubValue}>
+              
+              <option value={1}>admin</option>
+
+              <option value={2}>user</option>
+            </select>
+          </div>
+        </div>
         {userslist.length > 0 ? (
           <table className="table ">
             <thead>
@@ -130,26 +161,22 @@ export default function UsersList() {
         ) : (
           <NoData />
         )}
-          <nav aria-label="Page navigation example">
+        <nav aria-label="Page navigation example">
           <ul className="pagination">
-            <li className="page-item">
-              <a className="page-link" href="#" aria-label="Previous">
-                <span aria-hidden="true">&laquo;</span>
-              </a>
-            </li>
+            
             {arrayOfPages.map((pageNo, idx) => (
-              <li key={idx} onClick={()=>getUsers(pageNo , 30)} className="page-item">
+              <li
+                key={idx}
+                onClick={() => getUsers(pageNo, 30)}
+                className="page-item"
+              >
                 <a className="page-link" href="#">
                   {pageNo}
                 </a>
               </li>
             ))}
 
-            <li className="page-item">
-              <a className="page-link" href="#" aria-label="Next">
-                <span aria-hidden="true">&raquo;</span>
-              </a>
-            </li>
+          
           </ul>
         </nav>
       </div>

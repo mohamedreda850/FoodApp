@@ -1,7 +1,10 @@
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import avatar from "./../../../../assets/images/avatar.png";
-import Login from './../../../authentication/Components/Login/Login';
-export default function Navbar({ loginData }) {
+
+import { AuthContext } from "../../../../context/AuthContext";
+
+export default function Navbar() {
+  const {loginData} = useContext(AuthContext)
   useEffect(() => {console.log(loginData?.userName);
   },[])
   return (

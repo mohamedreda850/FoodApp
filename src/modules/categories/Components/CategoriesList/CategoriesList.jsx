@@ -11,8 +11,8 @@ import { useForm } from "react-hook-form";
 import useCategories from "./../../../../hooks/useCategories";
 
 export default function CategoriesList() {
-  
-  const categoriesQuairy  = useCategories();
+  const categoriesQuairy = useCategories();
+
   const {
     register,
     formState: { errors, isSubmitting },
@@ -55,12 +55,13 @@ export default function CategoriesList() {
       console.log(error);
     }
   };
-  // Modal for edit category
 
   const [showEdit, setShowEdit] = useState(false);
   const handleShowEdit = (id) => {
     setSelectedId(id);
-    const category = categoriesQuairy?.categories?.data?.find((cat) => cat.id === id);
+    const category = categoriesQuairy?.categories?.data?.find(
+      (cat) => cat.id === id
+    );
     setSelectedCategory(category);
 
     setShowEdit(true);
@@ -101,18 +102,22 @@ export default function CategoriesList() {
       );
       console.log(data);
       toast.success("category is deleted sucsessfuly");
-      categoriesQuairy.triggerCat()
+      categoriesQuairy.triggerCat();
     } catch (error) {
       error;
     }
 
     handleClose();
   };
+  const getNameValue = async (input) => {
+    categoriesQuairy.setName(input.target.value);
+    categoriesQuairy.triggerCat();
+  };
 
-  
   useEffect(() => {
     setValue("name", selectedCategory?.name);
   }, [selectedCategory]);
+
   return (
     <>
       <Header
@@ -204,6 +209,16 @@ export default function CategoriesList() {
         </button>
       </div>
       <div className="p-5">
+        <div className="row mb-3">
+          <div className="col-md-10">
+            <input
+              type="text"
+              placeholder="Search here"
+              className="form-control"
+              onChange={getNameValue}
+            />
+          </div>
+        </div>
         {categoriesQuairy?.categories?.data?.length > 0 ? (
           <table className="table ">
             <thead>
@@ -213,7 +228,7 @@ export default function CategoriesList() {
                 <th scope="col">Actions</th>
               </tr>
             </thead>
-            <tbody> 
+            <tbody>
               {categoriesQuairy?.categories?.data?.map((category, idx) => (
                 <tr key={idx}>
                   <td>{category.name}</td>
@@ -235,7 +250,27 @@ export default function CategoriesList() {
         ) : (
           <NoData />
         )}
-        
+        <nav aria-label="Page navigation example">
+          <ul className="pagination">
+           
+            {categoriesQuairy.arrayOfPages.map((pageNo, idx) => (
+              <li
+                key={idx}
+                onClick={() => {
+                  categoriesQuairy.setpageNumber(pageNo);
+                  categoriesQuairy.triggerCat();
+                }}
+                className="page-item"
+              >
+                <a className="page-link" href="#">
+                  {pageNo}
+                </a>
+              </li>
+            ))}
+
+          
+          </ul>
+        </nav>
       </div>
     </>
   );

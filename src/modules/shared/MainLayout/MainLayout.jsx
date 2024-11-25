@@ -4,7 +4,7 @@ import SideBar from "../Components/Sidebar/Sidebar";
 import Navbar from "./../Components/Navbar/Navbar";
 
 
-export default function  MainLayout({loginData}) {
+export default function  MainLayout() {
   return (
     <div className="d-flex ">
       
@@ -13,7 +13,7 @@ export default function  MainLayout({loginData}) {
       
 
       <div className="w-100">
-        <Navbar loginData={loginData} />
+        <Navbar  />
         
         <Outlet />
       </div>

@@ -29,7 +29,7 @@ export default function Registeration() {
       const { data } = await axiosInstans.post(AUTH_URLS.REGISTER, data1);
       setLoader(data);
       toast.success("register Successfully");
-      navigate("/login");
+      navigate("/verfy-password");
       setLoader(false);
     } catch (error) {
       console.log(error);

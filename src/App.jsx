@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react";
-
 import "./App.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import AuthLayout from "./modules/authentication/AuthLayout/AuthLayout";
@@ -15,28 +13,24 @@ import CategoriesList from "./modules/categories/Components/CategoriesList/Categ
 import CategoryData from "./modules/categories/Components/CategoryData/CategoryData";
 import UsersList from "./modules/users/Components/UsersList/UsersList";
 import ChangePass from "./modules/authentication/Components/ChangePass/ChangePass";
-import { ToastContainer, toast } from 'react-toastify';
-  import 'react-toastify/dist/ReactToastify.css';
-import { jwtDecode } from "jwt-decode";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import Dashboard from "./modules/shared/Components/Dashboard/Dashboard";
 import ProtectedRoute from "./modules/shared/Components/ProtectedRoute/ProtectedRoute";
 import RecipeForm from "./modules/recipes/Components/RecipeForm/RecipeForm";
+import Favourits from "./modules/Favourits/components/Favourits";
+import { AuthContext } from "./context/AuthContext";
+import { useContext } from "react";
+import AdminProtectedRoute from "./modules/shared/Components/AdminProtectedRoute/AdminProtectedRoute";
+import UserProtectedRoute from "./modules/shared/Components/UserProtectedRoute/UserProtectedRoute";
+import React, { useEffect, useState } from "react";
+import { Button, Modal } from "react-bootstrap";
+import VerifyAccount from "./modules/authentication/Components/VerifyAccount/VerifyAccount";
 
 function App() {
-  const [loginData, setLoginData] = useState(null)
-  let saveLoginData = () => {
-    let decodedToken  = localStorage.getItem("foodAppToken");
-    let encodedToken = jwtDecode(decodedToken);
-    setLoginData(encodedToken);
-    console.log(loginData);
-    
-  }
-  useEffect(()=>{
-    if(localStorage.getItem("foodAppToken")){
-      saveLoginData()
-    }
-   
-    },[])
+  const { loginData,  } = useContext(AuthContext);
+
   const routes = createBrowserRouter([
     {
       path: "",
@@ -45,7 +39,7 @@ function App() {
       children: [
         {
           index: true,
-          element:  <Login saveLoginData={saveLoginData}/>,
+          element: <Login />,
         },
         {
           path: "register",
@@ -53,7 +47,7 @@ function App() {
         },
         {
           path: "login",
-          element: <Login saveLoginData={saveLoginData}/>,
+          element: <Login />,
         },
         {
           path: "forget-password",
@@ -63,16 +57,24 @@ function App() {
           path: "reset-password",
           element: <ResetPass />,
         },
+        {
+          path:'verfy-password',
+          element: <VerifyAccount/>
+        }
       ],
     },
     {
       path: "dashboard",
-      element:<ProtectedRoute loginData={loginData}><MainLayout loginData={loginData}/></ProtectedRoute> ,
+      element: (
+        <ProtectedRoute loginData={loginData}>
+          <MainLayout />
+        </ProtectedRoute>
+      ),
       errorElement: <NotFound />,
       children: [
         {
           index: true,
-          element: <Dashboard loginData={loginData}/>,
+          element: <Dashboard />,
         },
         {
           path: "recipes",
@@ -80,11 +82,21 @@ function App() {
         },
         {
           path: "recipes/new-recipe",
-          element: <RecipeForm />,
+          element: (
+            <AdminProtectedRoute>
+              {" "}
+              <RecipeForm />
+            </AdminProtectedRoute>
+          ),
         },
         {
           path: "recipes/:recipeId",
-          element: <RecipeForm />,
+          element: (
+            <AdminProtectedRoute>
+              {" "}
+              <RecipeForm />
+            </AdminProtectedRoute>
+          ),
         },
         {
           path: "recipe-data",
@@ -92,7 +104,12 @@ function App() {
         },
         {
           path: "categories",
-          element: <CategoriesList />,
+          element: (
+            <AdminProtectedRoute>
+              {" "}
+              <CategoriesList />
+            </AdminProtectedRoute>
+          ),
         },
         {
           path: "category-data",
@@ -100,20 +117,38 @@ function App() {
         },
         {
           path: "users",
-          element: <UsersList />,
+          element: (
+            <AdminProtectedRoute>
+              <UsersList />
+            </AdminProtectedRoute>
+          ),
         },
         {
-          path:"change-password",
-          element:<ChangePass/>
-        }
+          path: "change-password",
+          element: <ChangePass />,
+        },
+        {
+          path: "favorites",
+          element: (
+            <UserProtectedRoute>
+              {" "}
+              <Favourits />
+            </UserProtectedRoute>
+          ),
+        },
       ],
     },
   ]);
 
-  return <>
-  <ToastContainer />
-  <RouterProvider router={routes}></RouterProvider>
-  </>;
+
+  return (
+    <>
+      <ToastContainer />
+      <RouterProvider router={routes}>
+       
+      </RouterProvider>
+    </>
+  );
 }
 
 export default App;
