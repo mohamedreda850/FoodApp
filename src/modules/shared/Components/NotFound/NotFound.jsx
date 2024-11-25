@@ -1,6 +1,6 @@
 import React from "react";
 import logo from "./../../../../assets/images/logo.png";
-import wave from "./../../../../assets/images/vector.png";
+import wave from "./../../../../assets/images/Vector.png";
 import NotFoundimg from "./../../../../assets/images/404.png";
 import { Link } from "react-router-dom";
 
