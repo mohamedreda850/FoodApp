@@ -53,12 +53,14 @@ export default function Favourits() {
         }
         imag={headerImg}
       />
-      <div className="container   my-5">
-        <div className="row gx-3 gy-3 px-2 ">
+      <div className="container-fluid   mx-4">
+        <div className="row  gutter-x-0">
           {favList.length > 0 ? (
             favList.map((item ,idx) => {
               return (
-                <div key={idx} className="col-md-4 p-0 text-center fav-cart custom-column ">
+                
+                <div key={idx} className="col-sm-12 col-md-6 col-lg-3 p-3 ">
+                
                   {item.recipe.imagePath ? (
                     <img
                       className="favImage"
@@ -74,6 +76,7 @@ export default function Favourits() {
                     <i className="fa fa-heart fa-regular fa-2x text-danger" onClick={()=>removeFromFavorite(item.id)}></i>
                     </div>
                   </div>
+                
                 </div>
               );
             })
