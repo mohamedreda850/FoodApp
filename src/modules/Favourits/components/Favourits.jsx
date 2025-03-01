@@ -60,7 +60,7 @@ export default function Favourits() {
               return (
                 
                 <div key={idx} className="col-sm-12 col-md-6 col-lg-3 p-3 ">
-                
+                <div className="">
                   {item.recipe.imagePath ? (
                     <img
                       className="favImage"
@@ -69,14 +69,14 @@ export default function Favourits() {
                   ) : (
                     <img className="nodataImg" src={noDataImg} />
                   )}
-                  <div className="item">
+                  <div className="item border px-2 rounded-bottom">
                     <h4 className="my-3">{item.recipe.name}</h4>
                     <div className="d-flex w-100  justify-content-between px-3 ">
                     <p>{item.recipe.description}</p>
                     <i className="fa fa-heart fa-regular fa-2x text-danger" onClick={()=>removeFromFavorite(item.id)}></i>
                     </div>
                   </div>
-                
+                  </div>
                 </div>
               );
             })

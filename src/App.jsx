@@ -24,8 +24,7 @@ import { AuthContext } from "./context/AuthContext";
 import { useContext } from "react";
 import AdminProtectedRoute from "./modules/shared/Components/AdminProtectedRoute/AdminProtectedRoute";
 import UserProtectedRoute from "./modules/shared/Components/UserProtectedRoute/UserProtectedRoute";
-import React, { useEffect, useState } from "react";
-import { Button, Modal } from "react-bootstrap";
+
 import VerifyAccount from "./modules/authentication/Components/VerifyAccount/VerifyAccount";
 
 function App() {
